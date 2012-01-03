@@ -51,8 +51,9 @@ typedef struct /* dwipe_options_t */
 	char*          logfile;              /* The dban log file.                                          */
 	int            web_enabled;          /* Specify whether to enable the web server functionality.     */
         int            web_port;             /* Specify the web server port                                 */
-        char*          web_basicauth_user;   /* The user for accessing the web server (HTTP Basic Auth)     */
-        char*          web_basicauth_passwd; /* The password for accessing the web server (HTTP Basic Auth) */
+	char*          web_listen;           /* The address where to listen                                 */
+        char*          web_auth_user;        /* The user for accessing the web server (HTTP Basic Auth)     */
+        char*          web_auth_pass;        /* The password for accessing the web server (HTTP Basic Auth) */
 } dwipe_options_t;
 
 extern dwipe_options_t dwipe_options;

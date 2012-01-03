@@ -74,8 +74,20 @@ int dwipe_options_parse( int argc, char** argv )
 		/* Verify that wipe patterns are being written to the device. */
 		{ "verify", required_argument, 0, 0 },
 
-		/* Verify that wipe patterns are being written to the device. */
+		/* The path were to write dban log. */
 		{ "log", required_argument, 0, 0 },
+
+		/* A flag to enable the webserver */
+		{ "web", no_argument, 0, 0 },
+
+		/* The port where the webserver will listen to (default 9595) */
+		{ "web-port", required_argument, 0, 0 },
+
+		/* The HTTP Basic Auth user to grant access to (default is empty) */
+		{ "web-user", required_argument, 0, 0 },
+
+		/* The HTTP Basic Auth password to grant access to (default is empty) */
+		{ "web-pass", required_argument, 0, 0 },
 
 		/* Requisite padding for getopt(). */
 		{ 0, 0, 0, 0 }
@@ -98,13 +110,18 @@ int dwipe_options_parse( int argc, char** argv )
 
 
 	/* Set default options. */
-	dwipe_options.autonuke = 0;
-	dwipe_options.method   = &dwipe_dodshort;
-	dwipe_options.prng     = &dwipe_twister;
-	dwipe_options.rounds   = 1;
-	dwipe_options.sync     = 0;
-	dwipe_options.verify   = DWIPE_VERIFY_LAST;
-        dwipe_options.logfile  = "/var/log/dban/dwipe.txt";
+	dwipe_options.autonuke      = 0;
+	dwipe_options.method        = &dwipe_dodshort;
+	dwipe_options.prng          = &dwipe_twister;
+	dwipe_options.rounds        = 1;
+	dwipe_options.sync          = 0;
+	dwipe_options.verify        = DWIPE_VERIFY_LAST;
+        dwipe_options.logfile       = "/var/log/dban/dwipe.txt";
+	dwipe_options.web_enabled   = 0;
+	dwipe_options.web_port      = 9595;
+	dwipe_options.web_listen    = "0.0.0.0";
+	dwipe_options.web_auth_user = "";
+	dwipe_options.web_auth_pass = "";
 
 	/* Parse command line options. */
 	while( 1 )
@@ -159,13 +176,13 @@ int dwipe_options_parse( int argc, char** argv )
 
 				if( strcmp( dwipe_options_long[i].name, "log" ) == 0 )
 				{
-					if ( fopen( optarg, "a" ) == NULL )
+					if( fopen( optarg, "a" ) == NULL )
 					{
 						fprintf( stderr, "Error: unable to create the log file '%s'.\n", optarg);
 						exit( EINVAL );
 					}
 
-					if ( access( optarg, W_OK ) == 0 )
+					if( access( optarg, W_OK ) == 0 )
 					{
 						dwipe_options.logfile = optarg;
 						break;
@@ -175,6 +192,42 @@ int dwipe_options_parse( int argc, char** argv )
 					exit( EINVAL );
 				}
 
+				if( strcmp( dwipe_options_long[i].name, "web" ) == 0 )
+				{
+					dwipe_options.web_enabled = 1;
+					break;
+				}
+
+				if( strcmp( dwipe_options_long[i].name, "web-port" ) == 0 )
+				{
+					if( *optarg > 0 && *optarg < 65536 )
+					{
+						dwipe_options.web_port = *optarg;
+						break;
+					}
+
+					fprintf( stderr, "Error: unable to use port '%d' for the webserver.\n", *optarg );
+					exit( EINVAL );
+				}
+
+				if( strcmp( dwipe_options_long[i].name, "web-user" ) == 0 )
+				{
+					dwipe_options.web_auth_user = optarg;
+					break;
+				}
+
+				if( strcmp( dwipe_options_long[i].name, "web-pass" ) == 0 )
+				{
+					dwipe_options.web_auth_pass = optarg;
+					break;
+				}
+
+				if ( ( strcmp( dwipe_options.web_auth_user, "") != 0 && strcmp( dwipe_options.web_auth_pass, "" ) == 0 ) ||
+				     ( strcmp( dwipe_options.web_auth_pass, "") == 0 && strcmp( dwipe_options.web_auth_pass, "") != 0  ) )
+				{
+					fprintf( stderr, "Error: you must specify both user and password for HTTP Basic Auth" );
+					exit( EINVAL );
+				}
 
 			case 'm':  /* Method option. */
 
@@ -266,6 +319,8 @@ int dwipe_options_parse( int argc, char** argv )
 
 	} /* command line options */
 
+	dwipe_options_log();
+
 	/* Return the number of options that were processed. */
 	return optind;
 
@@ -292,29 +347,36 @@ void dwipe_options_log( void )
 	}
 
 
-	dwipe_log( DWIPE_LOG_NOTICE, "  banner   = %s", dwipe_options.banner );
-	dwipe_log( DWIPE_LOG_NOTICE, "  method   = %s", dwipe_method_label( dwipe_options.method ) );
-	dwipe_log( DWIPE_LOG_NOTICE, "  rounds   = %i", dwipe_options.rounds );
-	dwipe_log( DWIPE_LOG_NOTICE, "  sync     = %i", dwipe_options.sync );
+	dwipe_log( DWIPE_LOG_NOTICE, "  banner     = %s", dwipe_options.banner );
+	dwipe_log( DWIPE_LOG_NOTICE, "  method     = %s", dwipe_method_label( dwipe_options.method ) );
+	dwipe_log( DWIPE_LOG_NOTICE, "  rounds     = %i", dwipe_options.rounds );
+	dwipe_log( DWIPE_LOG_NOTICE, "  sync       = %i", dwipe_options.sync );
 
 	switch( dwipe_options.verify )
 	{
 		case DWIPE_VERIFY_NONE:
-			dwipe_log( DWIPE_LOG_NOTICE, "  verify   = %i (off)", dwipe_options.verify );
+			dwipe_log( DWIPE_LOG_NOTICE, "  verify     = %i (off)", dwipe_options.verify );
 			break;
 
 		case DWIPE_VERIFY_LAST:
-			dwipe_log( DWIPE_LOG_NOTICE, "  verify   = %i (last pass)", dwipe_options.verify );
+			dwipe_log( DWIPE_LOG_NOTICE, "  verify     = %i (last pass)", dwipe_options.verify );
 			break;
 
 		case DWIPE_VERIFY_ALL:
-			dwipe_log( DWIPE_LOG_NOTICE, "  verify   = %i (all passes)", dwipe_options.verify );
+			dwipe_log( DWIPE_LOG_NOTICE, "  verify     = %i (all passes)", dwipe_options.verify );
 			break;
 
 		default:
-			dwipe_log( DWIPE_LOG_NOTICE, "  verify   = %i", dwipe_options.verify );
+			dwipe_log( DWIPE_LOG_NOTICE, "  verify     = %i", dwipe_options.verify );
 			break;
 	}
+
+	dwipe_log( DWIPE_LOG_NOTICE, "  log        = %s", dwipe_options.logfile );
+	dwipe_log( DWIPE_LOG_NOTICE, "  web        = %i", dwipe_options.web_enabled );
+	dwipe_log( DWIPE_LOG_NOTICE, "  web-port   = %i", dwipe_options.web_port );
+	dwipe_log( DWIPE_LOG_NOTICE, "  web-listen = %s", dwipe_options.web_listen );
+	dwipe_log( DWIPE_LOG_NOTICE, "  web-user   = %s", dwipe_options.web_auth_user );
+	dwipe_log( DWIPE_LOG_NOTICE, "  web-pass   = %s", dwipe_options.web_auth_pass );
 
 } /* dwipe_options_log */
 

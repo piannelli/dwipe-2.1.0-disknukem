@@ -36,7 +36,6 @@ void dwipe_log( dwipe_log_t level, const char* format, ... )
  *
  */
 
-
 	/* A result buffer. */
 	int r;
 
