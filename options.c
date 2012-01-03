@@ -24,6 +24,7 @@
 #include "prng.h"
 #include "options.h"
 #include "logging.h"
+#include <arpa/inet.h>
 
 /* The global options struct. */
 dwipe_options_t dwipe_options;
@@ -82,6 +83,9 @@ int dwipe_options_parse( int argc, char** argv )
 
 		/* The port where the webserver will listen to (default 9595) */
 		{ "web-port", required_argument, 0, 0 },
+
+		/* The address where the webserver will listen to (default 0.0.0.0) */
+		{ "web-listen", required_argument, 0, 0 },
 
 		/* The HTTP Basic Auth user to grant access to (default is empty) */
 		{ "web-user", required_argument, 0, 0 },
@@ -200,14 +204,29 @@ int dwipe_options_parse( int argc, char** argv )
 
 				if( strcmp( dwipe_options_long[i].name, "web-port" ) == 0 )
 				{
-					if( *optarg > 0 && *optarg < 65536 )
+					if( atoi(optarg) > 0 && atoi(optarg) < 65536 )
 					{
-						dwipe_options.web_port = *optarg;
+						dwipe_options.web_port = atoi(optarg);
 						break;
 					}
 
 					fprintf( stderr, "Error: unable to use port '%d' for the webserver.\n", *optarg );
 					exit( EINVAL );
+				}
+
+				if( strcmp( dwipe_options_long[i].name, "web-listen" ) == 0 )
+				{
+					struct sockaddr_in sa;
+
+					if ( inet_pton( AF_INET, optarg, &(sa.sin_addr) ) != 1 )
+					{
+						fprintf( stderr, "Error: the address '%s' where to listen is invalid.\n", optarg);
+						exit( EINVAL );
+					}
+
+					dwipe_options.web_listen = malloc( INET_ADDRSTRLEN );
+					inet_ntop( AF_INET, &( sa.sin_addr ), dwipe_options.web_listen, INET_ADDRSTRLEN );
+					break;
 				}
 
 				if( strcmp( dwipe_options_long[i].name, "web-user" ) == 0 )
