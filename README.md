@@ -22,7 +22,9 @@ After compiling it, to ensure it will start correctly, you need to manually crea
 in your system. For instance, if you have /dev/sda and /dev/sda1, you must create two files :
 
   echo -n /dev/sda  > /dev/sda.label
+
   echo -n /dev/sda1 > /dev/sda1.label
+
 
 # What will be new?
 
@@ -33,9 +35,14 @@ a suite to automate data destruction, for instance, in a web farm.
 ### New command line options :
 
   --logfile    # specify the path where to log
+
   --web        # enable the webserver
+
   --web-port   # identify the port where to listen
+
   --web-listen # identify the address where to listen
+
   --web-user   # the user for HTTP Basic Auth
+
   --web-pass   # the pass for the HTTP Basic Auth user
 
