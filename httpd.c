@@ -42,9 +42,17 @@ int handle_request( void *cls, struct MHD_Connection *connection,
 	{
 		page  = dwipe_get_status_xml(c1);
 	}
+	else if( strcmp( url, "/disks/all.json" ) == 0 )
+	{
+		page  = dwipe_get_status_json(c1);
+	}
 	else if( strcmp( url, "/disks/wiping.xml" ) == 0 )
 	{
 		page  = dwipe_get_status_xml(c2);
+	}
+	else if( strcmp( url, "/disks/wiping.json" ) == 0 )
+	{
+		page  = dwipe_get_status_json(c2);
 	}
 	else
 	{
