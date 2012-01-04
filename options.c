@@ -241,13 +241,6 @@ int dwipe_options_parse( int argc, char** argv )
 					break;
 				}
 
-				if ( ( strcmp( dwipe_options.web_auth_user, "") != 0 && strcmp( dwipe_options.web_auth_pass, "" ) == 0 ) ||
-				     ( strcmp( dwipe_options.web_auth_pass, "") == 0 && strcmp( dwipe_options.web_auth_pass, "") != 0  ) )
-				{
-					fprintf( stderr, "Error: you must specify both user and password for HTTP Basic Auth" );
-					exit( EINVAL );
-				}
-
 			case 'm':  /* Method option. */
 
 				if( strcmp( optarg, "dod522022m" ) == 0 || strcmp( optarg, "dod" ) == 0 )
@@ -337,6 +330,13 @@ int dwipe_options_parse( int argc, char** argv )
 		} /* method */
 
 	} /* command line options */
+
+	if ( ( strcmp( dwipe_options.web_auth_user, "" ) != 0 && strcmp( dwipe_options.web_auth_pass, "" ) == 0 ) ||
+	     ( strcmp( dwipe_options.web_auth_user, "" ) == 0 && strcmp( dwipe_options.web_auth_pass, "" ) != 0  ) )
+	{
+		fprintf( stderr, "Error: you must specify both user and password for HTTP Basic Auth.\n" );
+		exit( EINVAL );
+	}
 
 	dwipe_options_log();
 
