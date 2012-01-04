@@ -30,6 +30,7 @@
 #include "device.h"
 #include "logging.h"
 #include "gui.h"
+#include "httpd.h"
 
 #ifdef BB_DWIPE
 #include "mt19937ar-cok.c"
@@ -47,6 +48,11 @@
 #include <sys/shm.h>
 #include <wait.h>
 
+/* The array of enumerated contexts. */
+dwipe_context_t* c1;
+
+/* The array of contexts that will actually be wiped. */
+dwipe_context_t* c2;
 
 #ifdef BB_DWIPE
 int dwipe_main( int argc, char** argv )
@@ -78,12 +84,6 @@ int main( int argc, char** argv )
 
 	/* The generic result buffer. */
 	int r;
-
-	/* The array of enumerated contexts. */
-	dwipe_context_t* c1;
-
-	/* The array of contexts that will actually be wiped. */
-	dwipe_context_t* c2;
 
 	dwipe_log( DWIPE_LOG_NOTICE, "Program loaded." );
 
@@ -319,10 +319,15 @@ int main( int argc, char** argv )
 	/* Check for initialization errors. */
 	if( dwipe_error ) { return -1; }
 
+	/* Start the web server */
+	if ( dwipe_options.web_enabled == 1 )
+	{
+		dwipe_start_web_server();
+	}
+
 	/* Start the ncurses interface. */
 	dwipe_gui_init();
-	
-	
+
 	if( dwipe_options.autonuke == 1 )
 	{
 		/* Print the options window. */
@@ -385,14 +390,14 @@ int main( int argc, char** argv )
 			close( c1[i].device_fd );
 
 			/* Release private resources. */
-			free( c1[i].device_name );
-			free( c1[i].label       );
+			//free( c1[i].device_name );
+			//free( c1[i].label       );
 		}
 
 	} /* for */
 
 	/* We're done with the array of enumerated contexts. */
-	free( c1 );
+	//free( c1 );
 
 
 	for( i = 0 ; i < dwipe_selected ; i++ )

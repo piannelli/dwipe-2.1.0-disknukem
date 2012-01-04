@@ -41,19 +41,19 @@ void dwipe_options_log( void );
 
 typedef struct /* dwipe_options_t */
 {
-	int            autonuke;             /* Do not prompt the user for confirmation when set.           */
-	char*          banner;               /* The product banner shown on the top line of the screen.     */
-	dwipe_method_t method;               /* A function pointer to the wipe method that will be used.    */
-	dwipe_prng_t*  prng;                 /* The pseudo random number generator implementation.          */
-	int            rounds;               /* The number of times that the wipe method should be called.  */
-	int            sync;                 /* A flag to indicate whether writes should be sync'd.         */
-	dwipe_verify_t verify;               /* A flag to indicate whether writes should be verified.       */
-	char*          logfile;              /* The dban log file.                                          */
-	int            web_enabled;          /* Specify whether to enable the web server functionality.     */
-        int            web_port;             /* Specify the web server port                                 */
-	char*          web_listen;           /* The address where to listen                                 */
-        char*          web_auth_user;        /* The user for accessing the web server (HTTP Basic Auth)     */
-        char*          web_auth_pass;        /* The password for accessing the web server (HTTP Basic Auth) */
+	int             autonuke;             /* Do not prompt the user for confirmation when set.           */
+	char*           banner;               /* The product banner shown on the top line of the screen.     */
+	dwipe_method_t  method;               /* A function pointer to the wipe method that will be used.    */
+	dwipe_prng_t*   prng;                 /* The pseudo random number generator implementation.          */
+	int             rounds;               /* The number of times that the wipe method should be called.  */
+	int             sync;                 /* A flag to indicate whether writes should be sync'd.         */
+	dwipe_verify_t  verify;               /* A flag to indicate whether writes should be verified.       */
+	char*           logfile;              /* The dban log file.                                          */
+	int             web_enabled;          /* Specify whether to enable the web server functionality.     */
+        int             web_port;             /* Specify the web server port                                 */
+	char*           web_listen;           /* The address where to listen                                 */
+        char*           web_auth_user;        /* The user for accessing the web server (HTTP Basic Auth)     */
+        char*           web_auth_pass;        /* The password for accessing the web server (HTTP Basic Auth) */
 } dwipe_options_t;
 
 extern dwipe_options_t dwipe_options;
