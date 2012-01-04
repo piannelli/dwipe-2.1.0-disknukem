@@ -29,6 +29,7 @@
 /* The global context */
 dwipe_context_t* c1;
 dwipe_context_t* c2;
+dwipe_options_t dwipe_options;
 
 int handle_request( void *cls, struct MHD_Connection *connection,
                           const char *url,
@@ -36,9 +37,43 @@ int handle_request( void *cls, struct MHD_Connection *connection,
                           const char *upload_data,
                           size_t *upload_data_size, void **con_cls)
 {
-	const char *page;
+	char* user;
+	char* pass;
+	int fail_auth = 0;
+	const char* page;
+	struct MHD_Response *response;
+	int ret;
 
-	if( strcmp( url, "/disks/all.xml" ) == 0 )
+	if( strcmp( method, MHD_HTTP_METHOD_GET ) )
+	{
+		return MHD_NO;
+	}
+
+	if( strcmp( dwipe_options.web_auth_user, "" ) != 0 )
+	{
+		pass = NULL;
+		user = MHD_basic_auth_get_username_password( connection, &pass );
+
+		fail_auth = ( ( user == NULL ) ||
+			      ( strcmp( user, dwipe_options.web_auth_user ) != 0 ) ||
+			      ( strcmp( pass, dwipe_options.web_auth_pass ) != 0 ) );
+
+		if( user != NULL )
+		{
+			free( user );
+		}
+
+		if( pass != NULL )
+		{
+			free( pass );
+		}
+	}
+
+	if( fail_auth )
+	{
+		page = "<html><body><h1>401 Unauthorized</h1></body></html>";
+	}
+	else if( strcmp( url, "/disks/all.xml" ) == 0 )
 	{
 		page  = dwipe_get_status_xml(c1);
 	}
@@ -59,13 +94,10 @@ int handle_request( void *cls, struct MHD_Connection *connection,
 		page = "This server is currently being wiped";
 	}
 
-	struct MHD_Response *response;
-	int ret;
-
 	response = MHD_create_response_from_buffer (strlen (page),
                                                     (void*) page, MHD_RESPMEM_PERSISTENT);
 
-	ret = MHD_queue_response (connection, MHD_HTTP_OK, response);
+	ret = fail_auth ? MHD_queue_basic_auth_fail_response( connection, "dwipe", response ) : MHD_queue_response (connection, MHD_HTTP_OK, response);
 	MHD_destroy_response (response);
 
 	return ret;
