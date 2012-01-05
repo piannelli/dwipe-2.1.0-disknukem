@@ -28,7 +28,76 @@
 #include <libxml/xmlwriter.h>
 #include <libxml/tree.h>
 
-int dwipe_get_status_xml( dwipe_context_t* context )
+/* The combined number of errors of all processes. */
+u64 dwipe_errors;
+
+/* The starting time as string */
+char* dwipe_runtime;
+
+/* The remaining time as string */
+char* dwipe_remaining;
+
+/* The combined througput of all processes. */
+u64 dwipe_throughput;
+
+/* The load average as string */
+char* dwipe_loadavg;
+
+/* The number of contexts that have been enumerated. */
+int dwipe_enumerated;
+
+/* The number of contexts that have been selected.   */
+int dwipe_selected;
+
+char* dwipe_get_info_xml( void )
+{
+        int rc, buffer_size;
+        xmlTextWriterPtr writer;
+        xmlDocPtr doc;
+        xmlNodePtr node;
+        xmlChar *xml_buffer;
+
+        doc = xmlNewDoc( BAD_CAST XML_DEFAULT_VERSION );
+        if( doc == NULL )
+        {
+                return "Error: cannot create the xml document tree";
+        }
+
+        node = xmlNewDocNode( doc, NULL, BAD_CAST "dwipe", NULL );
+        if( node == NULL )
+        {
+                return "Error: cannot create the xml node";
+        }
+
+        xmlDocSetRootElement( doc, node );
+
+        writer = xmlNewTextWriterTree( doc, node, 0 );
+        if( writer == NULL )
+        {
+                return "Error: cannot create the xml writer";
+        }
+
+        rc = xmlTextWriterStartDocument( writer, NULL, "UTF-8", NULL );
+        rc = xmlTextWriterStartElement( writer, BAD_CAST "info" );
+	rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "entropy",      "Linux Kernel (urandom)" );
+	rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "prng",         "%s" , dwipe_options.prng->label );
+	rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "method",       "%s" , dwipe_method_label( dwipe_options.method) );
+	rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "verify",       "%d" , dwipe_options.verify );
+	rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "rounds",       "%d" , dwipe_options.rounds );
+	rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "runtime",      "%s" , dwipe_runtime );
+	rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "remaining",    "%s" , dwipe_remaining );
+	rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "load_avg",     "%s" , dwipe_loadavg );
+	rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "throughput",   "%llu" , dwipe_throughput );
+	rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "errors",       "%llu" , dwipe_errors );
+	rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "total_disks",  "%d" , dwipe_enumerated );
+	rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "wiping_disks", "%d" , dwipe_selected );
+        rc = xmlTextWriterEndDocument( writer );
+        xmlFreeTextWriter( writer );
+        xmlDocDumpFormatMemory( doc, &xml_buffer, &buffer_size, 1 );
+        return ((char *)xml_buffer);
+}
+
+char* dwipe_get_status_xml( dwipe_context_t* context )
 {
         int rc, buffer_size;
         int i = 0;

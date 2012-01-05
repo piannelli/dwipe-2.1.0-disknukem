@@ -54,6 +54,12 @@ dwipe_context_t* c1;
 /* The array of contexts that will actually be wiped. */
 dwipe_context_t* c2;
 
+/* The number of contexts that have been enumerated. */
+int dwipe_enumerated;
+
+/* The number of contexts that have been selected.   */
+int dwipe_selected = 0;
+
 #ifdef BB_DWIPE
 int dwipe_main( int argc, char** argv )
 #else
@@ -61,10 +67,8 @@ int main( int argc, char** argv )
 #endif
 {
 	int dwipe_optind;       /* The result of dwipe_options().                    */
-	int dwipe_enumerated;   /* The number of contexts that have been enumerated. */
 	int dwipe_error = 0;    /* An error counter.                                 */
 	int dwipe_pid;          /* The fork() result holder.                         */
-	int dwipe_selected = 0; /* The number of contexts that have been selected.   */
 	int dwipe_shmid;        /* A shared memory handle for the context array.     */
 	int dwipe_wait  = 0;    /* The number of child processes that have returned. */
 

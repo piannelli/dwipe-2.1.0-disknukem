@@ -115,7 +115,21 @@ const char* stats_title = " Statistics ";
 const char* dwipe_buttons1 = " P=PRNG M=Method V=Verify R=Rounds, J=Up K=Down Space=Select, F10=Start ";
 const char* dwipe_buttons2 = " J=Up K=Down Space=Select";
 
+/* The following are declared in global scope to share them with the API */
+/* The combined number of errors of all processes. */
+u64 dwipe_errors = 0;
 
+/* The starting time as string */
+char* dwipe_runtime;
+
+/* The remaining time as string */
+char* dwipe_remaining;
+
+/* The combined througput of all processes. */
+u64 dwipe_throughput = 0;
+
+/* The load average as string */
+char* dwipe_loadavg;
 
 void dwipe_gui_title( WINDOW* w, const char* s )
 {
@@ -132,7 +146,7 @@ void dwipe_gui_title( WINDOW* w, const char* s )
 
 	/* Get the window dimensions. */
 	getmaxyx( w, wy, wx );
-	
+
 	/* Print the title. */
 	mvwprintw( w, 0, ( wx - strlen( s ) ) / 2, "%s", s );
 
@@ -1415,6 +1429,7 @@ dwipe_gui_load( void )
 			/* Print the load average. */
 			mvwprintw( stats_window, DWIPE_GUI_STATS_LOAD_Y, DWIPE_GUI_STATS_TAB,
 			  "%04.2f %04.2f %04.2f", load_01, load_05, load_15 );
+			asprintf( &dwipe_loadavg, "%04.2f %04.2f %04.2f", load_01, load_05, load_15 );
 		}
 
 		else
@@ -1459,9 +1474,6 @@ void dwipe_gui_status( int count, dwipe_context_t* c )
 	/* The throughput format pointer. */
 	char* dwipe_format;
 
-	/* We count time from when this function is first called. */
-	static time_t dwipe_time_start = 0;
-
 	/* The current time. */
 	time_t dwipe_time_now;
 
@@ -1484,14 +1496,8 @@ void dwipe_gui_status( int count, dwipe_context_t* c )
 	/* User input buffer. */
 	int keystroke;
 
-	/* The combined througput of all processes. */
-	u64 dwipe_throughput = 0;
-
 	/* The estimated runtime of the slowest device. */
 	time_t dwipe_maxeta = 0;
-
-	/* The combined number of errors of all processes. */
-	u64 dwipe_errors = 0;
 
 	/* Time values. */
 	int dwipe_hh;
@@ -1501,6 +1507,8 @@ void dwipe_gui_status( int count, dwipe_context_t* c )
 	/* The number of active wipe processes. */
 	int dwipe_active = 0;
 
+	/* We count time from when this function is first called. */
+	static time_t dwipe_time_start = 0;
 
 	if( dwipe_time_start == 0 )
 	{
@@ -1739,6 +1747,7 @@ void dwipe_gui_status( int count, dwipe_context_t* c )
 	/* Print the runtime. */
 	mvwprintw( stats_window, DWIPE_GUI_STATS_RUNTIME_Y, 1, "Runtime:" );
 	mvwprintw( stats_window, DWIPE_GUI_STATS_RUNTIME_Y, DWIPE_GUI_STATS_TAB, "%02i:%02i:%02i", dwipe_hh, dwipe_mm, dwipe_ss );
+	asprintf( &dwipe_runtime, "%02i:%02i:%02i", dwipe_hh, dwipe_mm, dwipe_ss );
 
 	mvwprintw( stats_window, DWIPE_GUI_STATS_ETA_Y, 1, "Remaining:" );
 
@@ -1750,9 +1759,10 @@ void dwipe_gui_status( int count, dwipe_context_t* c )
 		dwipe_mm = dwipe_maxeta / 60;
 		dwipe_maxeta %= 60;
 		dwipe_ss = dwipe_maxeta;
-	
+
 		/* Print the estimated runtime remaining. */
 		mvwprintw( stats_window, DWIPE_GUI_STATS_ETA_Y, DWIPE_GUI_STATS_TAB, "%02i:%02i:%02i", dwipe_hh, dwipe_mm, dwipe_ss );
+		asprintf( &dwipe_remaining, "%02i:%02i:%02i", dwipe_hh, dwipe_mm, dwipe_ss );
 	}
 
 	/* Print the error count. */

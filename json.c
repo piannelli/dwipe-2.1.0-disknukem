@@ -26,7 +26,56 @@
 #include "options.h"
 #include <json/json.h>
 
-int dwipe_get_status_json( dwipe_context_t* context )
+/* The combined number of errors of all processes. */
+u64 dwipe_errors;
+
+/* The starting time as string */
+char* dwipe_runtime;
+
+/* The remaining time as string */
+char* dwipe_remaining;
+
+/* The combined througput of all processes. */
+u64 dwipe_throughput;
+
+/* The load average as string */
+char* dwipe_loadavg;
+
+/* The number of contexts that have been enumerated. */
+int dwipe_enumerated;
+
+/* The number of contexts that have been selected.   */
+int dwipe_selected;
+
+char* dwipe_get_info_json( void )
+{
+	char* tmp;
+	json_object* jdwipe = json_object_new_object();
+	json_object* jinfo  = json_object_new_object();
+
+	json_object_object_add( jinfo, "entropy", json_object_new_string( "Linux Kernel (urandom)" ) );
+	json_object_object_add( jinfo, "prng", json_object_new_string( dwipe_options.prng->label ) );
+	json_object_object_add( jinfo, "method", json_object_new_string( dwipe_method_label( dwipe_options.method ) ) );
+	json_object_object_add( jinfo, "verify", json_object_new_int( dwipe_options.verify ) );
+	json_object_object_add( jinfo, "rounds", json_object_new_int( dwipe_options.rounds ) );
+	asprintf(&tmp, "%s", dwipe_runtime);
+	json_object_object_add( jinfo, "runtime", json_object_new_string( tmp ) );
+	asprintf(&tmp, "%s", dwipe_remaining);
+	json_object_object_add( jinfo, "remaining", json_object_new_string( tmp ) );
+	asprintf(&tmp, "%s", dwipe_loadavg);
+	json_object_object_add( jinfo, "load_avg", json_object_new_string( tmp ) );
+	json_object_object_add( jinfo, "throughput", json_object_new_double( dwipe_throughput ) );
+	json_object_object_add( jinfo, "errors", json_object_new_double( dwipe_errors ) );
+	json_object_object_add( jinfo, "total_disks", json_object_new_int( dwipe_enumerated ) );
+	json_object_object_add( jinfo, "wiping_disks", json_object_new_int( dwipe_selected ) );
+
+	json_object_object_add( jdwipe, "info", jinfo );
+	free( tmp );
+
+        return json_object_to_json_string( jdwipe );
+}
+
+char* dwipe_get_status_json( dwipe_context_t* context )
 {
 	json_object* jdwipe = json_object_new_object();
 	json_object* jdisks = json_object_new_object();

@@ -73,6 +73,14 @@ int handle_request( void *cls, struct MHD_Connection *connection,
 	{
 		page = "<html><body><h1>401 Unauthorized</h1></body></html>";
 	}
+	else if( strcmp( url, "/dwipe.xml" ) == 0 )
+	{
+		page = dwipe_get_info_xml();
+	}
+	else if ( strcmp( url, "/dwipe.json" ) == 0 )
+	{
+		page = dwipe_get_info_json();
+	}
 	else if( strcmp( url, "/disks/all.xml" ) == 0 )
 	{
 		page  = dwipe_get_status_xml(c1);
