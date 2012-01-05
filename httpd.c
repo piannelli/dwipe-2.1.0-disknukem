@@ -39,7 +39,10 @@ int handle_request( void *cls, struct MHD_Connection *connection,
 {
 	char* user;
 	char* pass;
+	char* cur_dir;
+	char* file_path;
 	int fail_auth = 0;
+	FILE* fh;
 	const char* page;
 	struct MHD_Response *response;
 	int ret;
@@ -69,7 +72,19 @@ int handle_request( void *cls, struct MHD_Connection *connection,
 		}
 	}
 
-	if( fail_auth )
+	cur_dir = malloc( 128 );
+	getcwd( cur_dir, 128 );
+	file_path = malloc( sizeof( cur_dir ) + sizeof( url ) );
+	file_path = strcat( cur_dir, url );
+
+	fh = fopen( file_path, "r" );
+	if (fh > 0)
+	{
+		page = malloc( 8194 );
+		fread( page, 8192, 1, fh );
+		fclose( fh );
+	}
+	else if( fail_auth )
 	{
 		page = "<html><body><h1>401 Unauthorized</h1></body></html>";
 	}
