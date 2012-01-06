@@ -84,9 +84,9 @@ char* dwipe_get_info_xml( void )
 	rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "method",       "%s" , dwipe_method_label( dwipe_options.method) );
 	rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "verify",       "%d" , dwipe_options.verify );
 	rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "rounds",       "%d" , dwipe_options.rounds );
-	rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "runtime",      "%s" , dwipe_runtime );
-	rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "remaining",    "%s" , dwipe_remaining );
-	rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "load_avg",     "%s" , dwipe_loadavg );
+	rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "runtime",      "%s" , dwipe_runtime ? dwipe_runtime : "" );
+	rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "remaining",    "%s" , dwipe_remaining ? dwipe_remaining : "" );
+	rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "load_avg",     "%s" , dwipe_loadavg ? dwipe_loadavg : "" );
 	rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "throughput",   "%llu" , dwipe_throughput );
 	rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "errors",       "%llu" , dwipe_errors );
 	rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "total_disks",  "%d" , dwipe_enumerated );

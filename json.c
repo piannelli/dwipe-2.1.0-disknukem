@@ -58,11 +58,11 @@ char* dwipe_get_info_json( void )
 	json_object_object_add( jinfo, "method", json_object_new_string( dwipe_method_label( dwipe_options.method ) ) );
 	json_object_object_add( jinfo, "verify", json_object_new_int( dwipe_options.verify ) );
 	json_object_object_add( jinfo, "rounds", json_object_new_int( dwipe_options.rounds ) );
-	asprintf(&tmp, "%s", dwipe_runtime);
+	asprintf(&tmp, "%s", dwipe_runtime ? dwipe_runtime : "" );
 	json_object_object_add( jinfo, "runtime", json_object_new_string( tmp ) );
-	asprintf(&tmp, "%s", dwipe_remaining);
+	asprintf(&tmp, "%s", dwipe_remaining ? dwipe_remaining : "" );
 	json_object_object_add( jinfo, "remaining", json_object_new_string( tmp ) );
-	asprintf(&tmp, "%s", dwipe_loadavg);
+	asprintf(&tmp, "%s", dwipe_loadavg ? dwipe_loadavg : "" );
 	json_object_object_add( jinfo, "load_avg", json_object_new_string( tmp ) );
 	json_object_object_add( jinfo, "throughput", json_object_new_double( dwipe_throughput ) );
 	json_object_object_add( jinfo, "errors", json_object_new_double( dwipe_errors ) );
