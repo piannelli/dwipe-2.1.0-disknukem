@@ -507,7 +507,7 @@ int main( int argc, char** argv )
 		fprintf( dwipe_result_fp, "DWIPE_LABEL='%s'\n", c2[i].label );
 		fprintf( dwipe_result_fp, "DWIPE_METHOD='%s'\n", dwipe_method_label( dwipe_options.method) );
 		fprintf( dwipe_result_fp, "DWIPE_ROUNDS='%i'\n", dwipe_options.rounds );
-		
+
 		if( dwipe_options.verify == DWIPE_VERIFY_NONE )
 		{
 			fprintf( dwipe_result_fp, "DWIPE_VERIFY='off'\n" );
@@ -520,7 +520,7 @@ int main( int argc, char** argv )
 		{
 			fprintf( dwipe_result_fp, "DWIPE_VERIFY='last'\n" );
 		}
-		
+
 		if( c2[i].result < 0 )
 		{
 			dwipe_log( DWIPE_LOG_NOTICE, "Wipe of device '%s' failed.", c2[i].device_name );
@@ -538,21 +538,36 @@ int main( int argc, char** argv )
 			dwipe_log( DWIPE_LOG_NOTICE, "Wipe of device '%s' incomplete.", c2[i].device_name );
 			fprintf( dwipe_result_fp, "DWIPE_RESULT='fail'\n" );
 		}
-		
+
 		fclose( dwipe_result_fp );
 	}
 
 	for( i = 0 ; i < dwipe_selected ; i++ )
 	{
 		/* Check for fatal errors. */
-		if( c2[i].result < 0 ){ return -1; }
+		if( c2[i].result < 0 )
+		{
+			/* Too bad, lets notify this if user wanted to */
+			dwipe_notify_fail();
+
+			return -1;
+		}
 	}
 
 	for( i = 0 ; i < dwipe_selected ; i++ )
 	{
 		/* Check for non-fatal errors. */
-		if( c2[i].result > 0 ){ return 1; }
+		if( c2[i].result > 0 )
+		{
+			/* Even if errors were non-fatal, the wiping operation wasn't successful */
+			dwipe_notify_fail();
+
+			return 1;
+		}
 	}
+
+	/* We try to send a notification if this was chosen */
+	dwipe_notify_success();
 
 	/* Success. The shared memory will be released when we exit. */
 	return 0;
