@@ -78,7 +78,7 @@ char* dwipe_get_info_json( void )
 char* dwipe_get_status_json( dwipe_context_t* context )
 {
 	json_object* jdwipe = json_object_new_object();
-	json_object* jdisks = json_object_new_object();
+	json_object* jdisks = json_object_new_array();
 
 	int i = 0;
 
@@ -96,6 +96,7 @@ char* dwipe_get_status_json( dwipe_context_t* context )
 			json_object* jround = json_object_new_object();
 			json_object* jpass = json_object_new_object();
 
+			json_object_object_add( jdisk, "name", json_object_new_string( context[i].device_name ) );
 			json_object_object_add( jdisk, "select", json_object_new_int( context[i].select ) );
 			json_object_object_add( jdisk, "label", json_object_new_string( context[i].label ) );
 			json_object_object_add( jdisk, "eta", json_object_new_double( context[i].eta ) );
@@ -132,7 +133,7 @@ char* dwipe_get_status_json( dwipe_context_t* context )
 			json_object_object_add( jround, "working", json_object_new_int( context[i].round_working ) );
 			json_object_object_add( jdisk, "round", jround );
 
-			json_object_object_add( jdisks, context[i].device_name, jdisk );
+			json_object_array_add( jdisks, jdisk );
                 }
         }
 

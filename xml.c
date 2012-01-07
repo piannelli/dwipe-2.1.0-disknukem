@@ -139,7 +139,7 @@ char* dwipe_get_status_xml( dwipe_context_t* context )
                         }
 
                         rc = xmlTextWriterStartElement( writer, BAD_CAST "disk" );
-                        rc = xmlTextWriterWriteAttribute( writer, BAD_CAST "name", BAD_CAST context[i].device_name );
+                        rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "name", "%s" , context[i].device_name );
                         rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "select", "%d" , context[i].select );
                         rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "label", "%s" , context[i].label );
                         rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "eta", "%llu" , context[i].eta );
