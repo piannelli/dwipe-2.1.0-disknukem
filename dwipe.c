@@ -74,7 +74,7 @@ int main( int argc, char** argv )
 
 	/* The list of device filenames. */
 	char** dwipe_names = NULL;
-	
+
 	/* Used to write-out the result file. */
 	char dwipe_result_file [FILENAME_MAX];
 	FILE* dwipe_result_fp;
@@ -157,7 +157,7 @@ int main( int argc, char** argv )
 		/* Set the entropy source. */
 		c1[i].entropy_fd = dwipe_entropy;
 
-		/* Get the file name. */	
+		/* Get the file name. */
 		c1[i].device_name = dwipe_names[i];
 
 		/* Open the file for reads and writes. */
@@ -275,7 +275,7 @@ int main( int argc, char** argv )
 		{
 			/* Reset the file pointer. */
 			r = lseek( c1[i].device_fd, 0, SEEK_SET );
-	
+
 			if( r == (loff_t)-1 )
 			{
 				dwipe_perror( errno, __FUNCTION__, "lseek" );
@@ -432,10 +432,13 @@ int main( int argc, char** argv )
 
 	} /* forking */
 
+	/* Notify that wiping has started */
+	dwipe_notify_start();
+
 	/* Change the terminal mode to non-blocking input. */
 	nodelay( stdscr, 0 );
 	halfdelay( DWIPE_KNOB_SLEEP * 10 );
-	
+
 	while( dwipe_wait < dwipe_selected )
 	{
 		/* Sleeping is handled by the getch block. */

@@ -29,6 +29,10 @@
 #define _FILE_OFFSET_BITS 64
 #endif
 
+#ifndef _DWIPE_VERSION
+#define _DWIPE_VERSION "Disk Nukem/1.0"
+#endif
+
 /* Busybox headers. */
 #ifdef BB_VER
 #include "busybox.h"

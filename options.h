@@ -54,6 +54,9 @@ typedef struct /* dwipe_options_t */
 	char*           web_listen;           /* The address where to listen                                 */
         char*           web_auth_user;        /* The user for accessing the web server (HTTP Basic Auth)     */
         char*           web_auth_pass;        /* The password for accessing the web server (HTTP Basic Auth) */
+	char*           notify_success_url;   /* The url to call after successful completion                 */
+	char*           notify_fail_url;      /* The url to call in case of failure                          */
+	char*           notify_start_url;     /* The url to call when wiping actually starts                 */
 } dwipe_options_t;
 
 extern dwipe_options_t dwipe_options;

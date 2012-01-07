@@ -93,6 +93,15 @@ int dwipe_options_parse( int argc, char** argv )
 		/* The HTTP Basic Auth password to grant access to (default is empty) */
 		{ "web-pass", required_argument, 0, 0 },
 
+		/* The url to call when wiping actually starts */
+		{ "notify-start", required_argument, 0, 0 },
+
+		/* The url to call when wiping finish successfully */
+		{ "notify-success", required_argument, 0, 0 },
+
+		/* The url to call when wiping fails */
+		{ "notify-fail", required_argument, 0, 0 },
+
 		/* Requisite padding for getopt(). */
 		{ 0, 0, 0, 0 }
 	};
@@ -238,6 +247,24 @@ int dwipe_options_parse( int argc, char** argv )
 				if( strcmp( dwipe_options_long[i].name, "web-pass" ) == 0 )
 				{
 					dwipe_options.web_auth_pass = optarg;
+					break;
+				}
+
+				if( strcmp( dwipe_options_long[i].name, "notify-start" ) == 0 )
+				{
+					dwipe_options.notify_start_url = optarg;
+					break;
+				}
+
+				if( strcmp( dwipe_options_long[i].name, "notify-success" ) == 0 )
+				{
+					dwipe_options.notify_success_url = optarg;
+					break;
+				}
+
+				if( strcmp( dwipe_options_long[i].name, "notify-fail" ) == 0 )
+				{
+					dwipe_options.notify_fail_url = optarg;
 					break;
 				}
 
