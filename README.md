@@ -13,7 +13,7 @@ To start development, check out the source code
 
 ### Libraries needed
 
-To build correctly you need to have installed libncurses, libpthread, libmicrohttpd 0.9.9 and libxml2.
+To build correctly you need to have installed libncurses, libpthread, libmicrohttpd 0.9.9, libxml2, libjson and libcurl.
 
 ### Trick to do testing
 
@@ -46,3 +46,8 @@ a suite to automate data destruction, for instance, in a web farm.
 
   --web-pass   # the pass for the HTTP Basic Auth user
 
+  --notify-start # the url to retrieve when the actual start begins
+
+  --notify-success # the url to retrieve when the nuke finish successfully
+
+  --notify-fail # the url to retrieve when the nuke fails
