@@ -1,0 +1,65 @@
+<html>
+<head>
+  <title>Disk Nukem</title>
+  <style type="text/css">
+    #dwipe-info { float: left; width: 49%; display: inline-table }
+    #statistics { float: left; width: 49%; display: inline-table }   
+    #footer { clear: both; text-align: center; margin-top: 30px }
+    li { list-style-type: none  }
+    h3 { text-align: center; margin-top: 10px }
+    .tabs { max-height: 500px; overflow: auto }
+    .disk-info { width: 250px; height: 310px; display: inline-block; margin: 5px; margin-right: 14px }
+    .disk-footer { text-align: center; margin: 0; position: relative; top: -50px }
+    .clear { clear: both }
+  </style>
+  <link media="screen" rel="stylesheet" type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/ui-darkness/jquery-ui.css" />
+  <script type="text/javascript" src="http://www.google.com/jsapi"></script>
+  <script type="text/javascript" src="/web/core.js"></script>
+  <script type="text/javascript">
+    google.load("jquery", "1"); 
+    google.load("visualization", "1", {packages:["corechart"]});
+    google.load("jqueryui", "1.8.16");
+    google.setOnLoadCallback(documentReady);
+  </script>
+</head>
+
+<body class="ui-widget ui-widget-content" style="border:0">
+  <h1>Disk Nukem Status</h1>
+  <div id="dwipe-info">
+      <li>Entropy    : <span id="entropy"></span></li>
+      <li>PRNG       : <span id="prng"></span></li>
+      <li>Method     : <span id="method"></span></li>
+      <li>Verify     : <span id="verify"></span></li>
+      <li>Rounds     : <span id="rounds"></span></li>    
+  </div>
+  <div id="statistics">
+    <ul>
+      <li>Runtime    : <span id="runtime"></span></li>
+      <li>Remaining  : <span id="remaining"></span></li>
+      <li>Load avg   : <span id="loadavg"></span></li>
+      <li>Throughput : <span id="throughput"></span></li>
+      <li>Errors     : <span id="errors"></span></li>
+    </ul>
+  </div>
+  <div class="clear"></div>
+  <div id="tabs">
+    <ul>
+      <li><a id="ui-wiping-tab" href="#wiping-tab"><span>Currently Wiping (<span id="wiping-count"></span>)</span></a></li>
+      <li><a id="ui-all-tab" href="#all-tab"><span>All disks (<span id="all-count"></span>)</span></a></li>
+      <li><a id="ui-log-tab" href="#log-tab"><span>Logs</span></a></li>
+    </ul>
+    <div class="tabs" id="wiping-tab">
+      <span id="wiping-no-data">There is no data to display</span>
+    </div>
+    <div class="tabs" id="all-tab">
+      <span id="all-no-data">There is no data to display</span>
+    </div>
+    <div class="tabs" id="log-tab">
+      <span id="log-no-data">There is no data to display</span>
+    </div>
+  </div>
+  <div id="footer">
+    Disk Nukem is opensource! Support its development! More about the project at : <a href="http://www.disknukem.org">http://www.disknukem.org</a>
+  </div>
+</body>
+</html>
