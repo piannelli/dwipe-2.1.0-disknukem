@@ -99,6 +99,7 @@ int main( int argc, char** argv )
 	{
 		dwipe_perror( errno, __FUNCTION__, "open" );
 		dwipe_log( DWIPE_LOG_FATAL, "Unable to open entropy source %s.", DWIPE_KNOB_ENTROPY );
+		dwipe_notify_fail();
 		return errno;
 	}
 
@@ -116,6 +117,7 @@ int main( int argc, char** argv )
 		if( dwipe_enumerated == 0 )
 		{
 			dwipe_log( DWIPE_LOG_ERROR, "Storage devices not found." );
+			dwipe_notify_fail();
 			return -1;
 		}
 
@@ -142,6 +144,7 @@ int main( int argc, char** argv )
 	{
 		dwipe_perror( errno, __FUNCTION__, "malloc" );
 		dwipe_log( DWIPE_LOG_FATAL, "Unable to create the array of enumeration contexts." );
+		dwipe_notify_fail();
 		return errno;
 	}
 
@@ -321,7 +324,11 @@ int main( int argc, char** argv )
 	} /* file arguments */
 
 	/* Check for initialization errors. */
-	if( dwipe_error ) { return -1; }
+	if( dwipe_error )
+	{
+		dwipe_notify_fail();
+		return -1;
+	}
 
 	/* Start the web server */
 	if ( dwipe_options.web_enabled == 1 )
@@ -364,6 +371,7 @@ int main( int argc, char** argv )
 		dwipe_log( DWIPE_LOG_FATAL, "Unable to allocate shared memory for the context array." );
 		dwipe_log( DWIPE_LOG_FATAL, "The return was %l for size %l.", dwipe_shmid, dwipe_selected * sizeof( dwipe_context_t ) );
 		dwipe_gui_free();
+		dwipe_notify_fail();
 		return errno;
 	}
 
@@ -376,6 +384,7 @@ int main( int argc, char** argv )
 		dwipe_perror( errno, __FUNCTION__, "shmat" );
 		dwipe_log( DWIPE_LOG_FATAL, "Unable to attach shared memory." );
 		dwipe_gui_free();
+		dwipe_notify_fail();
 		return errno;
 	}
 
@@ -458,6 +467,7 @@ int main( int argc, char** argv )
 				{
 					dwipe_perror( errno, __FUNCTION__, "waitpid" );
 					dwipe_gui_free();
+					dwipe_notify_fail();
 					return errno;
 				}
 
