@@ -41,6 +41,7 @@ int handle_request( void *cls, struct MHD_Connection *connection,
 	char* pass;
 	char* cur_dir;
 	char* file_path;
+	int file_length = 0;
 	int fail_auth = 0;
 	FILE* fh;
 	const char* page;
@@ -72,16 +73,32 @@ int handle_request( void *cls, struct MHD_Connection *connection,
 		}
 	}
 
-	cur_dir = malloc( 128 );
-	getcwd( cur_dir, 128 );
-	file_path = malloc( sizeof( cur_dir ) + sizeof( url ) );
-	file_path = strcat( cur_dir, url );
+	if( strcmp( url, "/" ) == 0 || strcmp( url, "" ) == 0 )
+	{
+		url = "/web/index.html";
+	}
+
+	if( strcmp( url, "/logs" ) == 0 )
+	{
+		file_path = malloc( sizeof( dwipe_options.logfile ) );
+		file_path = dwipe_options.logfile;
+	}
+	else
+	{
+		cur_dir = malloc( 128 );
+		getcwd( cur_dir, 128 );
+		file_path = malloc( sizeof( cur_dir ) + sizeof( url ) );
+		file_path = strcat( cur_dir, url );
+	}
 
 	fh = fopen( file_path, "r" );
 	if (fh > 0)
 	{
-		page = malloc( 8194 );
-		fread( page, 8192, 1, fh );
+		fseek(fh, 0, SEEK_END);
+		file_length = ftell(fh);
+		rewind(fh);
+		page = malloc( sizeof( char ) * file_length + 1 );
+		fread( page, sizeof( char ), file_length, fh );
 		fclose( fh );
 	}
 	else if( fail_auth )
