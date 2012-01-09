@@ -39,36 +39,44 @@ void dwipe_device_identify( dwipe_context_t* c )
 	 * @modifies   c->label  The menu description that the user sees.
 	 *
 	 */
-	 
-	int result;
-	char buffer [FILENAME_MAX];
+
 	FILE* fp;
-	 
+	char* path;
+	char model[41];
+	char* device;
+	static struct hd_driveid hd;
+
 	/* Allocate memory for the label. */
- 	c->label = malloc( DWIPE_KNOB_LABEL_SIZE );
- 	
- 	snprintf( buffer, sizeof(buffer), "%s.label", c->device_name );
+	c->label = malloc( DWIPE_KNOB_LABEL_SIZE );
 
-	fp = fopen( buffer, "r" );
-
-	if( fp == NULL )
+	if ( ioctl( c->device_fd, HDIO_GET_IDENTITY, &hd ) != 0 )
 	{
-		perror( "dwipe_device_identify: fopen" );
-		fprintf( stderr, "Error: Unable to open '%s'.\n", buffer );
-		exit( errno );
+		asprintf( &c->label, "%s - %.40s", c->device_name, hd.model );
 	}
-	
-	if( fgets( buffer, sizeof(buffer), fp ) != NULL )
+	else if ( 1 || errno == -ENOMSG )
 	{
-		strncpy( c->label, buffer, DWIPE_KNOB_LABEL_SIZE );
+		device = malloc( sizeof( c->device_name ) - 4 );
+		path = malloc( sizeof( device ) + 32 );
+		strcpy( device, &c->device_name[5] );
+		asprintf( &path, "/sys/class/block/%s/device/model", device );
+		fp = fopen( path, "r" );
+		if( fp != NULL )
+		{
+			fgets( model, 40, fp );
+			model[ strlen( model ) - 1 ] = '\0';
+
+			asprintf( &c->label, "%s - %s", c->device_name, model );
+		}
+		else
+		{
+			c->label = c->device_name;
+		}
 	}
 	else
 	{
-		strncpy( c->label, "Uninitialized Device", DWIPE_KNOB_LABEL_SIZE );
+		c->label = c->device_name;
 	}
-	
-	
-	
+
 } /* dwipe_device_identify */
 
 
