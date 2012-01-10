@@ -15,17 +15,6 @@ To start development, check out the source code
 
 To build correctly you need to have installed libncurses, libpthread, libmicrohttpd 0.9.9, libxml2, libjson and libcurl.
 
-### Trick to do testing
-
-dwipe expects to have the label of each drive written in /dev so it can display it.
-After compiling it, to ensure it will start correctly, you need to manually create a ".label" file for each device udev recognized
-in your system. For instance, if you have /dev/sda and /dev/sda1, you must create two files :
-
-  echo -n /dev/sda  > /dev/sda.label
-
-  echo -n /dev/sda1 > /dev/sda1.label
-
-
 # What will be new?
 
 This version of dwipe will add functionality to expose data through the web in XML and JSON.
