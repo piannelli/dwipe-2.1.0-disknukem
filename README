@@ -1,0 +1,42 @@
+# dban-2.1.0-disknukem
+
+This is an enhanced version of DBAN's dwipe suite that allows users to destroy data in any physical mass storage attached.
+Since development of DBAN/dwipe has been stopped for a while, this version will try to resolve bugs and add some additional features.
+
+# Development
+
+The development is active, so the possibility you download non-working code is higher than normal.
+To start development, check out the source code
+
+### Check out source code
+    git clone git://github.com/piannelli/dban-2.1.0-disknukem.git
+
+### Libraries needed
+
+To build correctly you need to have installed libncurses, libpthread, libmicrohttpd 0.9.9, libxml2, libjson and libcurl.
+
+# What will be new?
+
+This version of dwipe will add functionality to expose data through the web in XML and JSON.
+It will also have features like fast wipe (although unsecure) and, alltogether with Disk Nukem (see other project), it will provide
+a suite to automate data destruction, for instance, in a web farm.
+
+### New command line options :
+
+  --logfile    # specify the path where to log
+
+  --web        # enable the webserver
+
+  --web-port   # identify the port where to listen
+
+  --web-listen # identify the address where to listen
+
+  --web-user   # the user for HTTP Basic Auth
+
+  --web-pass   # the pass for the HTTP Basic Auth user
+
+  --notify-start # the url to retrieve when the actual start begins
+
+  --notify-success # the url to retrieve when the nuke finish successfully
+
+  --notify-fail # the url to retrieve when the nuke fails
