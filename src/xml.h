@@ -27,3 +27,27 @@
 #include <libxml/encoding.h>
 #include <libxml/xmlwriter.h>
 #include <libxml/tree.h>
+
+/* The combined number of errors of all processes. */
+u64 dwipe_errors;
+
+/* The starting time as string */
+char* dwipe_runtime;
+
+/* The remaining time as string */
+char* dwipe_remaining;
+
+/* The combined througput of all processes. */
+u64 dwipe_throughput;
+
+/* The load average as string */
+char* dwipe_loadavg;
+
+/* The number of contexts that have been enumerated. */
+int dwipe_enumerated;
+
+/* The number of contexts that have been selected.   */
+int dwipe_selected;
+
+const char* dwipe_get_info_xml( void );
+const char* dwipe_get_status_xml( dwipe_context_t* context );

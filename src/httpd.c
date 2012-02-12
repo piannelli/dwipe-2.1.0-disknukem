@@ -94,11 +94,14 @@ int handle_request( void *cls, struct MHD_Connection *connection,
 	fh = fopen( file_path, "r" );
 	if (fh > 0)
 	{
+		char* tmp;
 		fseek(fh, 0, SEEK_END);
 		file_length = ftell(fh);
 		rewind(fh);
-		page = malloc( sizeof( char ) * file_length + 1 );
-		fread( page, sizeof( char ), file_length, fh );
+		tmp = malloc( sizeof( char ) * file_length + 1 );
+		fread( tmp, sizeof( char ), file_length, fh );
+		page = tmp;
+		free( tmp );
 		fclose( fh );
 	}
 	else if( fail_auth )
@@ -143,7 +146,7 @@ int handle_request( void *cls, struct MHD_Connection *connection,
 	return ret;
 }
 
-int dwipe_start_web_server( void )
+void dwipe_start_web_server( void )
 {
 	struct MHD_Daemon *daemon;
 

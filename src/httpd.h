@@ -42,6 +42,26 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <microhttpd.h>
+#include "json.h"
+#include "xml.h"
+#include "dwipe.h"
+#include "context.h"
+#include "method.h"
+#include "prng.h"
+#include "options.h"
 
 /* The global options struct. */
 dwipe_options_t dwipe_options;
+
+/* The global context */
+dwipe_context_t* c1;
+dwipe_context_t* c2;
+dwipe_options_t dwipe_options;
+
+int handle_request( void *cls, struct MHD_Connection *connection,
+                          const char *url,
+                          const char *method, const char *version,
+                          const char *upload_data,
+                          size_t *upload_data_size, void **con_cls);
+
+void dwipe_start_web_server( void );

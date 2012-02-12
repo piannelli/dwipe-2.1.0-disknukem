@@ -47,7 +47,7 @@ int dwipe_enumerated;
 /* The number of contexts that have been selected.   */
 int dwipe_selected;
 
-char* dwipe_get_info_json( void )
+const char* dwipe_get_info_json( void )
 {
 	char* tmp;
 	json_object* jdwipe = json_object_new_object();
@@ -75,7 +75,7 @@ char* dwipe_get_info_json( void )
         return json_object_to_json_string( jdwipe );
 }
 
-char* dwipe_get_status_json( dwipe_context_t* context )
+const char* dwipe_get_status_json( dwipe_context_t* context )
 {
 	json_object* jdwipe = json_object_new_object();
 	json_object* jdisks = json_object_new_array();
@@ -138,5 +138,6 @@ char* dwipe_get_status_json( dwipe_context_t* context )
         }
 
 	json_object_object_add( jdwipe, "disks", jdisks );
-        return json_object_to_json_string( jdwipe );
+
+	return json_object_to_json_string( jdwipe );
 }

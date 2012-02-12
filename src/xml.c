@@ -49,7 +49,7 @@ int dwipe_enumerated;
 /* The number of contexts that have been selected.   */
 int dwipe_selected;
 
-char* dwipe_get_info_xml( void )
+const char* dwipe_get_info_xml( void )
 {
         int rc, buffer_size;
         xmlTextWriterPtr writer;
@@ -97,7 +97,7 @@ char* dwipe_get_info_xml( void )
         return ((char *)xml_buffer);
 }
 
-char* dwipe_get_status_xml( dwipe_context_t* context )
+const char* dwipe_get_status_xml( dwipe_context_t* context )
 {
         int rc, buffer_size;
         int i = 0;

@@ -19,7 +19,6 @@
  *
  */
 
-
 #include <time.h>
 
 #include "dwipe.h"
@@ -31,6 +30,7 @@
 #include "logging.h"
 #include "gui.h"
 #include "httpd.h"
+#include "notify.h"
 
 #ifdef BB_DWIPE
 #include "mt19937ar-cok.c"

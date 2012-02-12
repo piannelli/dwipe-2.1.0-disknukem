@@ -24,4 +24,15 @@
 #include "method.h"
 #include "prng.h"
 #include "options.h"
+#include "logging.h"
 #include <curl/curl.h>
+
+/* The global options struct */
+dwipe_options_t dwipe_options;
+
+size_t dwipe_notify_do_nothing( char *ptr, size_t size, size_t nmemb, void *userdata);
+
+int dwipe_notify_curl( char* address );
+int dwipe_notify_start( void );
+int dwipe_notify_success( void );
+int dwipe_notify_fail( void );

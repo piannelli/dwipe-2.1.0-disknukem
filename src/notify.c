@@ -19,15 +19,7 @@
  *
  */
 
-#include "dwipe.h"
-#include "context.h"
-#include "method.h"
-#include "options.h"
 #include "notify.h"
-#include "logging.h"
-
-/* The global options struct */
-dwipe_options_t dwipe_options;
 
 size_t dwipe_notify_do_nothing( char *ptr, size_t size, size_t nmemb, void *userdata)
 {
@@ -74,6 +66,8 @@ int dwipe_notify_start( void )
 	{
 		return dwipe_notify_curl( dwipe_options.notify_start_url );
 	}
+
+	return 0;
 }
 
 int dwipe_notify_success( void )
@@ -82,6 +76,8 @@ int dwipe_notify_success( void )
 	{
 		return dwipe_notify_curl( dwipe_options.notify_success_url );
 	}
+
+	return 0;
 }
 
 int dwipe_notify_fail( void )
@@ -90,4 +86,6 @@ int dwipe_notify_fail( void )
 	{
 		return dwipe_notify_curl( dwipe_options.notify_fail_url );
 	}
+
+	return 0;
 }

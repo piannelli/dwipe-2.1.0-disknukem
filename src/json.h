@@ -25,3 +25,27 @@
 #include "prng.h"
 #include "options.h"
 #include <json/json.h>
+
+/* The combined number of errors of all processes. */
+u64 dwipe_errors;
+
+/* The starting time as string */
+char* dwipe_runtime;
+
+/* The remaining time as string */
+char* dwipe_remaining;
+
+/* The combined througput of all processes. */
+u64 dwipe_throughput;
+
+/* The load average as string */
+char* dwipe_loadavg;
+
+/* The number of contexts that have been enumerated. */
+int dwipe_enumerated;
+
+/* The number of contexts that have been selected.   */
+int dwipe_selected;
+
+const char* dwipe_get_info_json( void );
+const char* dwipe_get_status_json( dwipe_context_t* context );
