@@ -148,10 +148,10 @@ am__leading_dot = .
 am__quote = 
 am__tar = ${AMTAR} chof - "$$tardir"
 am__untar = ${AMTAR} xf -
-bindir = ${exec_prefix}/bin
+bindir = $(prefix)/disk-nukem
 build_alias = 
 builddir = .
-datadir = ${datarootdir}
+datadir = $(prefix)/disk-nukem/data
 datarootdir = ${prefix}/share
 docdir = ${datarootdir}/doc/${PACKAGE_TARNAME}
 dvidir = ${docdir}
@@ -180,7 +180,7 @@ target_alias =
 top_build_prefix = 
 top_builddir = .
 top_srcdir = .
-SUBDIRS = src
+SUBDIRS = src data
 all: all-recursive
 
 .SUFFIXES:
