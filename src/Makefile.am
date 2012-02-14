@@ -1,6 +1,14 @@
 all: *.c
 	$(CC) -Os -Wall -D_GNU_SOURCE -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE *.c -lncurses -lmicrohttpd -lpthread -lxml2 -I/usr/include/libxml2 -ljson -lcurl -o disknukem
 
+install: disknukem
+	mkdir -p $(prefix)/share/disknukem/bin
+	mkdir -p $(prefix)/share/disknukem/web
+	install -m 0755 disknukem $(prefix)/bin
+	install -m 0644 web/* $(prefix)/share/disknukem/web
+
+.PHONY: install
+
 clean:
 	rm -f a.out disknukem
 	rm -f *.o
